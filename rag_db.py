@@ -3,10 +3,9 @@ import os
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import TextLoader
 from langchain_community.vectorstores import Chroma
-from langchain_openai import OpenAIEmbeddings
 from langchain_community.embeddings.fastembed import FastEmbedEmbeddings
 from langchain.embeddings import HuggingFaceEmbeddings
-from langchain_google_genai import ChatGoogleGenerativeAI , GoogleGenerativeAIEmbeddings
+from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 
 # Define the directory containing the text file and the persistent directory
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -38,24 +37,23 @@ if not os.path.exists(persistent_directory):
 
     # Create embeddings
     print("\n--- Creating embeddings ---")
-#     embeddings = HuggingFaceEmbeddings(
-#     model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
-# )
-    
-#     embeddings = HuggingFaceEmbeddings(
-#     model_name="sentence-transformers/all-mpnet-base-v2"
-# )
+    #     embeddings = HuggingFaceEmbeddings(
+    #     model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+    # )
+
+    #     embeddings = HuggingFaceEmbeddings(
+    #     model_name="sentence-transformers/all-mpnet-base-v2"
+    # )
     embeddings = HuggingFaceEmbeddings(
-    model_name="gmunkhtur/finetuned_paraphrase-multilingual"
-)
+        model_name="gmunkhtur/finetuned_paraphrase-multilingual"
+    )
     # embeddings = GoogleGenerativeAIEmbeddings(model="models/text-multilingual-embedding-002")
 
     print("\n--- Finished creating embeddings ---")
 
     # Create the vector store and persist it automatically
     print("\n--- Creating vector store ---")
-    db = Chroma.from_documents(
-        docs, embeddings, persist_directory=persistent_directory)
+    db = Chroma.from_documents(docs, embeddings, persist_directory=persistent_directory)
     print("\n--- Finished creating vector store ---")
 
 else:

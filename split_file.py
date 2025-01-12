@@ -1,8 +1,8 @@
 import pandas as pd
 
 # Load the CSV file
-input_file = "C:/Users/munkhtur.g/Downloads/eduge.csv"
-output_file_base = "./books/split_file_"
+input_file = "./data/eduge.csv"
+output_file_base = "./data/split_file_"
 
 # Read the CSV into a DataFrame
 df = pd.read_csv(input_file)

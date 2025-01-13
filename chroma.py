@@ -1,13 +1,18 @@
 import chromadb
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
+import os
 
-embeddings = HuggingFaceEmbeddings(
-model_name="gmunkhtur/paraphrase-mongolian-minilm-mntoken"
+current_dir = os.path.dirname(os.path.abspath(__file__))
+file_path = os.path.join(current_dir, "data", "all_articles.txt")
+persistent_directory = os.path.join(current_dir, "db", "chroma_db_mongol_test")
+
+embedding_function = HuggingFaceEmbeddings(
+    model_name="gmunkhtur/finetuned_paraphrase-multilingual"
 )
-vector_store = Chroma(
-
-    persist_directory="./db/chroma_db_mongoltxt_token",  # Where to save data locally, remove if not necessary
+langchain_chroma = Chroma(
+    persist_directory=persistent_directory,
+    embedding_function=embedding_function,
 )
 
 
@@ -15,19 +20,8 @@ vector_store = Chroma(
 # persistent_client = vector_store.get()
 # collection = vector_store.get()
 # Retrieve all documents
-results = vector_store.get(include=["documents", "metadatas"])
+# results = langchain_chroma.get(include=["documents", "metadatas"])
 # print("Result",results)
 # Print all the data
-with open("results2.txt", "w", encoding="utf-8") as file:
-    # Loop through each document and write it to the file
-    for result in results['documents']:
-        file.write(result + "\n\n") 
-        file.write( "------------------------------------------------\n\n") 
-
-
-for document, metadata in zip(results['documents'], results['metadatas']):
-    print(f"Document: {document}")
-    print(f"Metadata: {metadata}")
-
-
-
+# Print the last 5 documents and their corresponding metadata
+print("There are", langchain_chroma._collection.count(), "in the collection")

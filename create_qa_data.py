@@ -13,12 +13,10 @@ load_dotenv(override=True)
 
 
 # Use file path directly
-loader = CSVLoader("./books/split_file_2.csv", encoding="utf-8", content_columns="news")
+loader = CSVLoader("./data/split_file_3.csv", encoding="utf-8", content_columns="news")
 
 text_splitter = RecursiveCharacterTextSplitter(
-    chunk_size = 1000,
-    chunk_overlap  = 100,
-    length_function = len
+    chunk_size=1000, chunk_overlap=100, length_function=len
 )
 
 training_documents = text_splitter.split_documents(loader.load())
@@ -28,18 +26,18 @@ import uuid
 id_set = set()
 
 for document in training_documents:
-  id = str(uuid.uuid4())
-  while id in id_set:
-    id = uuid.uuid4()
-  id_set.add(id)
-  document.metadata["id"] = id
+    id = str(uuid.uuid4())
+    while id in id_set:
+        id = uuid.uuid4()
+    id_set.add(id)
+    document.metadata["id"] = id
 
 
 qa_chat_model = ChatGoogleGenerativeAI(model="gemini-1.5-flash")
 
 
 qa_prompt = """\
-Given the following context, you must generate  questions based on the content.  Questions must be in Mongolian. The questions can be specific or general, including broad or vague queries that pertain to the overall subject matter.
+Given the following context, you must generate {n_questions} questions based on the content.  Questions must be in Mongolian. The questions can be specific or general, including broad or vague queries that pertain to the overall subject matter.
 
 Some examples of general questions might include phrases like "What is this about?" or "Tell me more about [specific topic]." The goal is to produce a variety of questions that could encourage deeper exploration of the provided context, including some that are vague or open-ended.
 
@@ -61,19 +59,13 @@ qa_prompt_template = ChatPromptTemplate.from_template(qa_prompt)
 question_generation_chain = qa_prompt_template | qa_chat_model
 
 
-
 def create_questions_safe(documents, n_questions, file_path):
     # Load existing data from the JSON file, if it exists
 
-        # Initialize with an empty dataset structure
+    # Initialize with an empty dataset structure
 
-
-    for document in tqdm.tqdm(documents[:100]):
-        existing_data = {
-        "questions": {},
-        "relevant_contexts": {},
-        "corpus": {}
-        }
+    for document in tqdm.tqdm(documents[-400:-200]):
+        existing_data = {"questions": {}, "relevant_contexts": {}, "corpus": {}}
 
         questions = existing_data.get("questions", {})
         relevant_docs = existing_data.get("relevant_contexts", {})
@@ -94,11 +86,12 @@ def create_questions_safe(documents, n_questions, file_path):
         except Exception as e:
             print(f"Error encountered: {e}")
             # Save progress to file in case of an error
-            save_to_file(file_path, questions, relevant_docs, corpus)
+            # save_to_file(file_path, questions, relevant_docs, corpus)
             continue  # Skip the problematic document and continue
 
     # Final save after processing all documents
     # save_to_file(file_path, questions, relevant_docs, corpus)
+
 
 def save_to_file(file_path, questions, relevant_docs, corpus):
     if os.path.exists(file_path):
@@ -106,11 +99,7 @@ def save_to_file(file_path, questions, relevant_docs, corpus):
             existing_data = json.load(f)
     else:
         # Initialize with an empty dataset structure
-        existing_data = {
-            "questions": {},
-            "relevant_contexts": {},
-            "corpus": {}
-        }
+        existing_data = {"questions": {}, "relevant_contexts": {}, "corpus": {}}
 
     ex_questions = existing_data.get("questions", {})
     ex_relevant_docs = existing_data.get("relevant_contexts", {})
@@ -119,10 +108,11 @@ def save_to_file(file_path, questions, relevant_docs, corpus):
     ex_questions.update(questions)
     ex_relevant_docs.update(relevant_docs)
     ex_corpus.update(corpus)
-    
+
     with open(file_path, "w") as f:
         json.dump(existing_data, f)
 
+
 # Call the function
-file_path = "./books/training_dataset_eval.jsonl"
+file_path = "./data/training_dataset_eval.jsonl"
 create_questions_safe(training_documents, 5, file_path)

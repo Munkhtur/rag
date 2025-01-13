@@ -7,6 +7,8 @@ from langchain_openai import OpenAIEmbeddings
 from langchain_community.embeddings.fastembed import FastEmbedEmbeddings
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain_google_genai import ChatGoogleGenerativeAI , GoogleGenerativeAIEmbeddings
+from langchain_community.retrievers import BM25Retriever
+
 
 # Define the directory containing the text file and the persistent directory
 current_dir = os.path.dirname(os.path.abspath(__file__))

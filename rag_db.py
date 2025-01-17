@@ -11,8 +11,8 @@ from langchain_community.retrievers import BM25Retriever
 
 # Define the directory containing the text file and the persistent directory
 current_dir = os.path.dirname(os.path.abspath(__file__))
-file_path = os.path.join(current_dir, "books", "mongol.txt")
-persistent_directory = os.path.join(current_dir, "db", "chroma_db_mongoltxt_110")
+file_path = os.path.join(current_dir, "books", "sample.txt")
+persistent_directory = os.path.join(current_dir, "db", "chroma_db_mpnet_try1")
 
 # Check if the Chroma vector store already exists
 if not os.path.exists(persistent_directory):
@@ -47,7 +47,7 @@ if not os.path.exists(persistent_directory):
     #     model_name="sentence-transformers/all-mpnet-base-v2"
     # )
     embeddings = HuggingFaceEmbeddings(
-        model_name="gmunkhtur/finetuned_paraphrase-multilingual"
+        model_name="gmunkhtur/finetuned_paraphrase-multilingual_mpnet"
     )
     # embeddings = GoogleGenerativeAIEmbeddings(model="models/text-multilingual-embedding-002")
 

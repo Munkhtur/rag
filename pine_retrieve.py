@@ -1,0 +1,74 @@
+import os
+
+from langchain_community.vectorstores import Chroma
+from langchain_community.embeddings.fastembed import FastEmbedEmbeddings
+from langchain.embeddings import HuggingFaceEmbeddings
+from langchain_pinecone import PineconeVectorStore
+from pinecone import Pinecone, ServerlessSpec
+from dotenv import load_dotenv
+import time
+from langchain_cohere import CohereRerank
+
+load_dotenv(override=True)
+
+pc = Pinecone()
+
+
+index_name = "langchain-mongol-context"  # change if desired
+
+existing_indexes = [index_info["name"] for index_info in pc.list_indexes()]
+
+if index_name not in existing_indexes:
+    pc.create_index(
+        name=index_name,
+        dimension=384,
+        metric="cosine",
+        spec=ServerlessSpec(cloud="aws", region="us-east-1"),
+    )
+    while not pc.describe_index(index_name).status["ready"]:
+        time.sleep(1)
+
+index = pc.Index(index_name)
+
+
+# persistent_directory = os.path.join(current_dir, "db", "chroma_db_mongol_test")
+
+embeddings = HuggingFaceEmbeddings(
+        model_name="gmunkhtur/finetuned_paraphrase-multilingual_test"
+    )
+
+
+
+vector_store = PineconeVectorStore(index=index, embedding=embeddings)
+
+
+
+
+
+# Define the user's question
+query = "хэдэн онд Төрийн далбааны өдөртэй болох хуулийг баталсан"
+
+
+
+# Retrieve relevant documents based on the query
+retriever = vector_store.as_retriever(
+    search_type="similarity_score_threshold",
+    search_kwargs={"k": 3, "score_threshold": 0.5},
+)
+
+# retriever = db.as_retriever(
+#     search_type="mmr",
+#     search_kwargs={"k": 10, "fetch_k": 20, "lambda_mult":0.1},
+# )
+# retriever = vector_store.as_retriever(
+#     search_type="similarity",
+#     search_kwargs={"k":3},
+# )
+relevant_docs = retriever.invoke(query)
+
+# Display the relevant results with metadata
+print("\n--- Relevant Documents ---")
+for i, doc in enumerate(relevant_docs, 1):
+    print(f"Document {i}:\n{doc.page_content}\n")
+    if doc.metadata:
+        print(f"Source: {doc.metadata.get('source', 'Unknown')}\n")

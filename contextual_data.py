@@ -21,14 +21,14 @@ load_dotenv(override=True)
 
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
-file_path = os.path.join(current_dir, "data", "all_articles.txt")
-persistent_directory = os.path.join(current_dir, "db", "chroma_db_mongoltxt_110")
-db = Chroma(
-    persist_directory=persistent_directory,
-    embedding_function=HuggingFaceEmbeddings(
-        model_name="gmunkhtur/finetuned_paraphrase-multilingual"
-    ),
-)
+file_path = os.path.join(current_dir, "books", "part_1.txt")
+persistent_directory = os.path.join(current_dir, "db", "chroma_db_mongol_context")
+# db = Chroma(
+#     persist_directory=persistent_directory,
+#     embedding_function=HuggingFaceEmbeddings(
+#         model_name="gmunkhtur/finetuned_paraphrase-multilingual"
+#     ),
+# )
 
 
 llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash")
@@ -46,14 +46,15 @@ with open(file_path, "r", encoding="utf-8") as file:
 paragraphs = content.split("\n\n")
 # 2447
 print("-------------------", len(paragraphs))
-
-for paragraph in tqdm(paragraphs[18:19], desc="Processesing pragraphs"):
+total = 0
+for paragraph in tqdm(paragraphs, desc="Processesing pragraphs"):
     document = [Document(page_content=paragraph)]
 
     # Split the document into chunks
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
     docs = text_splitter.split_documents(document)
-    len(docs)
+    print("docs----",len(docs))
+    total += len(docs)
     contextual_prompt = """\
     <document>
     {document}
@@ -65,9 +66,9 @@ for paragraph in tqdm(paragraphs[18:19], desc="Processesing pragraphs"):
     Please give a short succinct context in Mongolian to situate this chunk within the overall document for the purposes of improving search retrieval of the chunk. Answer only with the succinct context and nothing else.
     """
 
-    # contextual_prompt = PromptTemplate.from_template(contextual_prompt)
+    contextual_prompt = PromptTemplate.from_template(contextual_prompt)
 
-    # add_context_chain = contextual_prompt | llm | StrOutputParser()
+    add_context_chain = contextual_prompt | llm | StrOutputParser()
 
     # for chunk in tqdm(docs, desc="processeing chuncks"):
     #     context = add_context_chain.invoke(
@@ -84,5 +85,7 @@ for paragraph in tqdm(paragraphs[18:19], desc="Processesing pragraphs"):
 
     # Create the vector store and persist it automatically
     print("\n--- Creating vector store ---")
-    db.add_documents(docs)
+    # db.add_documents(docs)
     print("\n--- Finished creating vector store ---")
+
+print("total", total)

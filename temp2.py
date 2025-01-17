@@ -1,7 +1,7 @@
 from io import StringIO
 import os
 import traceback
-
+from pinecone import Pinecone, ServerlessSpec
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import TextLoader
 from langchain_core.prompts import PromptTemplate
@@ -9,40 +9,40 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 import tqdm
-from langchain.schema import Document
+from langchain_core.documents import Document
 from langchain_community.vectorstores import Chroma
 from langchain.embeddings import HuggingFaceEmbeddings
+from dotenv import load_dotenv
+import time
+from langchain_pinecone import PineconeVectorStore
+
+load_dotenv(override=True)
+
+
 
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
-file_path = os.path.join(current_dir, "data", "all_articles.txt")
-persistent_directory = os.path.join(current_dir, "db", "chroma_db_mongol_test")
+file_path = os.path.join(current_dir, "books", "all_articles.txt")
+persistent_directory = os.path.join(current_dir, "db", "chroma_db_mongol_all_articles")
 
 embedding_function = HuggingFaceEmbeddings(
     model_name="gmunkhtur/finetuned_paraphrase-multilingual"
 )
-langchain_chroma = Chroma(
-    persist_directory=persistent_directory,
-    embedding_function=embedding_function,
-)
 
-print("There are", langchain_chroma._collection.count(), "in the collection")
-
-# llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash")
 
 with open(file_path, "r", encoding="utf-8") as file:
     content = file.read()
 
 # # Split the content into paragraphs (assuming paragraphs are separated by new lines)
 paragraphs = content.split("\n\n")
-# first_paragraph = paragraphs[13]
+first_paragraph = paragraphs[13]
 
-# db = Chroma(
-#     persist_directory=persistent_directory,
-#     embedding_function=HuggingFaceEmbeddings(
-#         model_name="gmunkhtur/finetuned_paraphrase-multilingual"
-#     ),
-# )
+db = Chroma(
+    persist_directory=persistent_directory,
+    embedding_function=HuggingFaceEmbeddings(
+        model_name="gmunkhtur/finetuned_paraphrase-multilingual"
+    ),
+)
 
 for paragraph in paragraphs:
 
@@ -54,7 +54,7 @@ for paragraph in paragraphs:
         )
         docs = text_splitter.split_documents(document)
 
-        langchain_chroma.add_documents(docs)
+        db.add_documents(docs)
     except ValueError as e:
         # Print the error message
         print(f"An error occurred: {e}")

@@ -47,7 +47,7 @@ for document in training_documents:
     document.metadata["id"] = id
 
 
-qa_chat_model = ChatGoogleGenerativeAI(model="gemini-1.5-flash", api_key="AIzaSyCUUezOQ1gAosXWDR4vOgzvR7fcDzVyDHQ")
+qa_chat_model = ChatGoogleGenerativeAI(model="gemini-2.0-flash-exp", api_key="AIzaSyCUUezOQ1gAosXWDR4vOgzvR7fcDzVyDHQ")
 
 
 qa_prompt = """\
@@ -74,7 +74,7 @@ def create_questions_safe(documents, n_questions, file_path):
 
     # Initialize with an empty dataset structure
 
-    for document in tqdm.tqdm(documents[200:]):
+    for document in tqdm.tqdm(documents[:2]):
         existing_data = {"questions": {}, "relevant_contexts": {}, "corpus": {}}
 
         questions = existing_data.get("questions", {})
@@ -85,6 +85,7 @@ def create_questions_safe(documents, n_questions, file_path):
                 {"context": document.page_content, "n_questions": n_questions}
             )
             for question in questions_generated.content.split("\n"):
+                print(question)
                 question_id = str(uuid.uuid4())
                 if question.strip():
                     questions[question_id] = "".join(question.split(".")[1:]).strip()
@@ -124,5 +125,5 @@ def save_to_file(file_path, questions, relevant_docs, corpus):
 
 
 # Call the function
-file_path = "./books/mongol_data_eval.jsonl"
-create_questions_safe(training_documents, 5, file_path)
+file_path = "./books/mongol_data_evalgreg.jsonl"
+create_questions_safe(training_documents, 10, file_path)

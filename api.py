@@ -23,7 +23,9 @@ from langchain_community.vectorstores import Chroma
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from pinecone import Pinecone, ServerlessSpec
 from langchain_pinecone import PineconeVectorStore
-
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from uuid import uuid4
 
 # Load environment variables
 load_dotenv(override=True)
@@ -56,7 +58,7 @@ persistent_directory = os.path.join(current_dir, "db", "chroma_db_mongoltxt_110"
 embeddings = HuggingFaceEmbeddings(model_name="gmunkhtur/finetuned_paraphrase-multilingual_test")
 # db = Chroma(persist_directory=persistent_directory, embedding_function=embeddings)
 db = PineconeVectorStore(index=index, embedding=embeddings)
-llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash")
+llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash-exp")
 retriever = db.as_retriever(search_type="similarity", search_kwargs={"k": 3})
 
 contextualize_q_system_prompt = (
@@ -130,6 +132,14 @@ async def get_response(request: QueryRequest):
         "response": result.content
     }
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Replace "*" with specific origins if needed
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 @app.post("/chat")
 async def continual_chat(request: QueryRequest):
 
@@ -138,7 +148,7 @@ async def continual_chat(request: QueryRequest):
     if user_id not in chat_histories:
         chat_histories[user_id] = []
     chat_history = chat_histories[user_id]
-    print(chat_history)
+
     result = rag_chain.invoke({"input": request.query, "chat_history": chat_history})
     chat_history.append(HumanMessage(content=request.query))
     chat_history.append(AIMessage(content=result["answer"]))
@@ -146,6 +156,43 @@ async def continual_chat(request: QueryRequest):
         "query": request.query,
         "response": result["answer"]
     }
+
+@app.websocket("/ws/chat")
+async def websocket_chat(websocket: WebSocket):
+    await websocket.accept()
+    user_id = str(uuid4()) 
+    
+    try:
+        while True:
+            # Wait for the client message
+            data = await websocket.receive_json()
+            query = data["query"]
+
+            # Initialize chat history if not exists
+
+            if user_id not in chat_histories:
+                chat_histories[user_id] = []
+            chat_history = chat_histories[user_id]
+
+            # Process the RAG chain
+            result = rag_chain.invoke({"input": query, "chat_history": chat_history})
+
+            # Update chat history
+            chat_history.append(HumanMessage(content=query))
+            chat_history.append(AIMessage(content=result["answer"]))
+    
+            # Send response back to the client
+            await websocket.send_json({
+                "query": query,
+                "response": result["answer"]
+            })
+
+    except WebSocketDisconnect:
+        # Handle disconnection
+        print(chat_histories)
+        if user_id in chat_histories:
+            del chat_histories[user_id]
+        print("Client disconnected")
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="127.0.0.1", port=8000)

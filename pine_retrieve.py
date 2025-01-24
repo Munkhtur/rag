@@ -36,7 +36,7 @@ index = pc.Index(index_name)
 embeddings = HuggingFaceEmbeddings(
         model_name="gmunkhtur/finetuned_paraphrase-multilingual_test"
     )
-
+embeddings.embed_query()
 
 
 vector_store = PineconeVectorStore(index=index, embedding=embeddings)

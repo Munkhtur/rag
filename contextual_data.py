@@ -23,12 +23,12 @@ load_dotenv(override=True)
 current_dir = os.path.dirname(os.path.abspath(__file__))
 file_path = os.path.join(current_dir, "books", "part_1.txt")
 persistent_directory = os.path.join(current_dir, "db", "chroma_db_mongol_context")
-# db = Chroma(
-#     persist_directory=persistent_directory,
-#     embedding_function=HuggingFaceEmbeddings(
-#         model_name="gmunkhtur/finetuned_paraphrase-multilingual"
-#     ),
-# )
+db = Chroma(
+    persist_directory=persistent_directory,
+    embedding_function=HuggingFaceEmbeddings(
+        model_name="gmunkhtur/finetuned_paraphrase-multilingual"
+    ),
+)
 
 
 llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash")
@@ -85,7 +85,7 @@ for paragraph in tqdm(paragraphs, desc="Processesing pragraphs"):
 
     # Create the vector store and persist it automatically
     print("\n--- Creating vector store ---")
-    # db.add_documents(docs)
+    db.add_documents(docs)
     print("\n--- Finished creating vector store ---")
 
 print("total", total)

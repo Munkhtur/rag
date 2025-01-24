@@ -28,19 +28,19 @@ db = Chroma(persist_directory=persistent_directory,
 query = "Дорноговь аймаг"
 
 # Retrieve relevant documents based on the query
-# retriever = db.as_retriever( 
-#     search_type="similarity_score_threshold",
-#     search_kwargs={"k":3, "score_threshold": 0.5},
-# )
+retriever = db.as_retriever( 
+    search_type="similarity_score_threshold",
+    search_kwargs={"k":3, "score_threshold": 0.5},
+)
 
 # retriever = db.as_retriever(
 #     search_type="mmr",
 #     search_kwargs={"k": 10, "fetch_k": 20, "lambda_mult":0.1},
 # )
-retriever = db.as_retriever(
-    search_type="similarity",
-    search_kwargs={"k":3},
-)
+# retriever = db.as_retriever(
+#     search_type="similarity",
+#     search_kwargs={"k":3},
+# )
 
 # compressor = CohereRerank(model="rerank-multilingual-v2.0")
 

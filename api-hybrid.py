@@ -27,6 +27,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from uuid import uuid4
 from jwt import decode, exceptions, encode
+from hybridRetriever import HybridRetriever
+from elasticsearch import Elasticsearch
+from langchain_cohere import CohereRerank
 
 
 # Load environment variables
@@ -52,6 +55,8 @@ if index_name not in existing_indexes:
         time.sleep(1)
 
 index = pc.Index(index_name)
+es_client = Elasticsearch("http://localhost:9200")
+
 
 # Initialize embeddings and vector store
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -62,6 +67,20 @@ embeddings = HuggingFaceEmbeddings(model_name="gmunkhtur/finetuned_paraphrase-mu
 db = PineconeVectorStore(index=index, embedding=embeddings)
 llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash-exp")
 retriever = db.as_retriever(search_type="similarity", search_kwargs={"k": 3})
+
+
+cohere_reranker = CohereRerank(model="rerank-multilingual-v2.0", cohere_api_key="IQdhjcAu6onsC4g7upMNNvvM11zlcMc7MsPzFhcV", top_n=5)
+
+
+hybrid_retriever = HybridRetriever(
+    es_client=es_client,
+    pinecone_retriever=retriever,
+    cohere_reranker=cohere_reranker,
+    index_name="documents",
+    bm25_k=10,
+    vector_k=10,
+    top_n=5
+)
 
 contextualize_q_system_prompt = (
     "Given a chat history and the latest user question "
@@ -80,7 +99,7 @@ contextualize_q_prompt = ChatPromptTemplate.from_messages(
 )
 
 history_aware_retriever = create_history_aware_retriever(
-    llm, retriever, contextualize_q_prompt
+    llm, hybrid_retriever, contextualize_q_prompt
 )
 
 qa_system_prompt = (

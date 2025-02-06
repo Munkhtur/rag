@@ -128,7 +128,7 @@ bm25_docs = [
 combined_results = bm25_docs + vector_results 
 
 
-cohere_reranker = CohereRerank(model="rerank-multilingual-v2.0", cohere_api_key="IQdhjcAu6onsC4g7upMNNvvM11zlcMc7MsPzFhcV")
+cohere_reranker = CohereRerank(model="rerank-multilingual-v2.0")
 
 reranked_results = cohere_reranker.compress_documents(combined_results, query)
 

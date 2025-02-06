@@ -15,7 +15,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from dotenv import load_dotenv
 from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain_community.vectorstores import Chroma
+from langchain_community.vectorstores import Chroma, ElasticsearchStore
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.chains import create_history_aware_retriever, create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
@@ -41,7 +41,7 @@ pc = Pinecone()
 
 
 index_name = "langchain-mongol-context"  # change if desired
-
+index_name_es = "documents"
 existing_indexes = [index_info["name"] for index_info in pc.list_indexes()]
 
 if index_name not in existing_indexes:
@@ -56,6 +56,7 @@ if index_name not in existing_indexes:
 
 index = pc.Index(index_name)
 es_client = Elasticsearch("http://localhost:9200")
+db_es = ElasticsearchStore(elasticsearch_url="http://localhost:9200", index_name=index_name_es)
 
 
 # Initialize embeddings and vector store
@@ -69,7 +70,7 @@ llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash-exp")
 retriever = db.as_retriever(search_type="similarity", search_kwargs={"k": 3})
 
 
-cohere_reranker = CohereRerank(model="rerank-multilingual-v2.0", cohere_api_key="IQdhjcAu6onsC4g7upMNNvvM11zlcMc7MsPzFhcV", top_n=5)
+cohere_reranker = CohereRerank(model="rerank-multilingual-v2.0" , top_n=5)
 
 
 hybrid_retriever = HybridRetriever(

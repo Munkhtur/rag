@@ -47,7 +47,7 @@ for document in training_documents:
     document.metadata["id"] = id
 
 
-qa_chat_model = ChatGoogleGenerativeAI(model="gemini-2.0-flash-exp", api_key="AIzaSyCUUezOQ1gAosXWDR4vOgzvR7fcDzVyDHQ")
+qa_chat_model = ChatGoogleGenerativeAI(model="gemini-2.0-flash-exp")
 
 
 qa_prompt = """\

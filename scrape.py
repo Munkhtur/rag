@@ -15,7 +15,7 @@ load_dotenv(override=True)
 # Define the persistent directory
 current_dir = os.path.dirname(os.path.abspath(__file__))
 db_dir = os.path.join(current_dir, "db")
-persistent_directory = os.path.join(db_dir, "chroma_db_mobicom")
+# persistent_directory = os.path.join(db_dir, "chroma_db_mobicom")
 
 api_key = os.getenv("FIRECRAWL_API_KEY")
 if not api_key:
@@ -24,14 +24,14 @@ if not api_key:
 # Step 1: Crawl the website using FireCrawlLoader
 print("Begin crawling the website...")
 loader = FireCrawlLoader(
-        api_key=api_key, url="https://tdbm.mn/mn", mode="crawl")
+        api_key=api_key, url="https://tdbm.mn/mn/retail/savings/hugatsaatai/hugatsaatai-hadgalamj", mode="scrape")
 documents = loader.load()
 print("Finished crawling the website.")
 for doc in documents:
     for key, value in doc.metadata.items():
         if isinstance(value, list):
             doc.metadata[key] = ", ".join(map(str, value))
-output_file = "crawled_documents.txt"
+output_file = "crawled_documents_tdb_page.txt"
 
 # Open the file in write mode
 with open(output_file, "w", encoding="utf-8") as f:

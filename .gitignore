@@ -9,4 +9,6 @@
 /__pycache__
 /adapter
 /scraper/chrome-win64
-/scraper
+/scraper/data
+/scraper/*.exe
+/scraper/test

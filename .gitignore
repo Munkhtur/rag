@@ -10,3 +10,4 @@
 /scraper/chrome-win64
 /scraper/*.exe
 /scraper/test
+/scraper/__pycache__

@@ -9,7 +9,7 @@ if "user_id" not in st.session_state:
     st.session_state.user_id = str(uuid.uuid4())
 
 
-st.title("Simple chat ")
+st.title("Simple chat " + st.session_state.user_id)
 
 
 def response_generator(response):
@@ -35,7 +35,7 @@ if prompt := st.chat_input("What is up?"):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.spinner("Processing..."):
         try:
-            response = requests.post("http://127.0.0.1:8000/chat", json={"query": prompt, "user_id": st.session_state.user_id})
+            response = requests.post("http://127.0.0.1:8000/query", json={"query": prompt, "user_id": st.session_state.user_id})
             if response.status_code == 200:
                 data = response.json()
                 api_response = data["response"]

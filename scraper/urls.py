@@ -150,14 +150,14 @@ urls: Dict[str, List[List[str]]] = {
         
     ],
     "other": [
-        # ["https://tdbm.mn/mn/retail/other/hamtran-batlan-daagch-oorchloh"],
-        # ["https://tdbm.mn/mn/retail/other/ergen-tololtiin-huvaari-oorchloh"],
-        # ["https://tdbm.mn/mn/retail/other/itgemjleleer-uilchilgee-avah"],
-        # ["https://tdbm.mn/mn/retail/other/irgen-dansnii-todorhoilolt"],
-        # ["https://tdbm.mn/mn/retail/other/daatgal", 
-        #  "https://tdbm.mn/mn/retail/other/daatgal/daatgaliin-company",
-        #  "https://tdbm.mn/mn/retail/other/daatgal/daatgaliin-buteehdehuun",
-        #  ],
+        ["https://tdbm.mn/mn/retail/other/hamtran-batlan-daagch-oorchloh"],
+        ["https://tdbm.mn/mn/retail/other/ergen-tololtiin-huvaari-oorchloh"],
+        ["https://tdbm.mn/mn/retail/other/itgemjleleer-uilchilgee-avah"],
+        ["https://tdbm.mn/mn/retail/other/irgen-dansnii-todorhoilolt"],
+        ["https://tdbm.mn/mn/retail/other/daatgal", 
+         "https://tdbm.mn/mn/retail/other/daatgal/daatgaliin-company",
+         "https://tdbm.mn/mn/retail/other/daatgal/daatgaliin-buteehdehuun",
+         ],
         ["https://tdbm.mn/node/790","https://tdbm.mn/node/791","https://tdbm.mn/node/792","https://tdbm.mn/node/793",
         "https://tdbm.mn/node/794",
         "https://tdbm.mn/node/795",
@@ -196,7 +196,7 @@ urls: Dict[str, List[List[str]]] = {
         ["https://tdbm.mn/mn/corporate/loans/tosol-khotolboriyn-zeel/jaica-tosliyn-zeel"],
         ["https://tdbm.mn/mn/small-medium-sized-enterprise/aziin-khugjliin-banknii-ekh-uusver-zeeliin-batlan-daalttai-sangiin-batlan-daalttai-tosliin-zeel"],
         ["https://tdbm.mn/mn/small-medium-sized-enterprise/zeeliin-batlan-daaltiin-sangiin-undsen-batlan-daalttai-zeel"],
-    ],
+    ], # c, s. q
     "corp_ebank":[
         ["https://tdbm.mn/mn/corporate/tsahim-bank/bayguullagiin-debit-card"],
         ["https://tdbm.mn/mn/corporate/tsahim-bank/baiguullagiin-credit-card"],
@@ -204,11 +204,11 @@ urls: Dict[str, List[List[str]]] = {
         ["https://tdbm.mn/mn/corporate/tsahim-bank/dansnii-medeelel-damjuulah"],
         ["https://tdbm.mn/mn/corporate/tsahim-bank/corporate-gateway"],
         ["https://tdbm.mn/mn/corporate/tsahim-bank/online-bank"],
-    ],
+    ],#c, spl, q
     "corp_payment": [
         ["https://tdbm.mn/mn/corporate/gadaad-tolbor-toocoo/visa-b2b"],
         ["https://tdbm.mn/mn/corporate/korrespondent-bank"],
-    ],
+    ],#d 
     "finance":[
         ["https://tdbm.mn/mn/corporate/khudaldaany-sankhuuzhilt"],
         ["https://tdbm.mn/mn/corporate/khudaldaany-sankhuuzhilt/banknii-batalgaa"],
@@ -218,7 +218,7 @@ urls: Dict[str, List[List[str]]] = {
         ["https://tdbm.mn/mn/corporate/khudaldaany-sankhuuzhilt-factoring-uilchilgee"],
         ["https://tdbm.mn/mn/corporate/khudaldaany-sankhuuzhilt/export-zeel"],
         ["https://tdbm.mn/mn/corporate/exportlogdchdod-zoriulsan-zeel"],
-    ],
+    ], #d
     "corp_other": [
         ["https://tdbm.mn/mn/corporate/other/ariljaa"],
         ["https://tdbm.mn/mn/corporate/other/bagt-buteegdehuun"],
@@ -226,7 +226,7 @@ urls: Dict[str, List[List[str]]] = {
         ["https://tdbm.mn/mn/corporate/other/custodian-uilchilgee"],
         ["https://tdbm.mn/mn/corporate/other/dansnii-todorhoilolt"],
         ["https://tdbm.mn/mn/corporate/other/itgemjleleer-uilchilgee-avah"],
-    ],
+    ],# c, s ,q
     "sustain":[
         ["https://tdbm.mn/mn/sustainable-development-main"],
         ["https://tdbm.mn/mn/sustainable-development"],
@@ -235,7 +235,7 @@ urls: Dict[str, List[List[str]]] = {
         ["https://tdbm.mn/mn/sustainable-development/togtvortoi-sanhuujilt"],
         ["https://tdbm.mn/mn/sustainable-development/togtvortoi-hogjliin-tailan"],
         ["https://tdbm.mn/mn/sustainable-development/uur-amisgaliin-nogoon-san-uans"],
-    ],
+    ], #d
     "about":[
         ["https://tdbm.mn/mn/contact-us","https://tdbm.mn/mn/about-tdbm/introduction"],
         ["https://tdbm.mn/mn/about-tdbm/bank-goals"],
@@ -247,7 +247,7 @@ urls: Dict[str, List[List[str]]] = {
         ["https://tdbm.mn/mn/about-tdbm/compliance/harilcagch-tanij-medeh-ajillagaa"],
         ["https://tdbm.mn/mn/about-tdbm/compliance/guilgeend-hyanalt-tavih"],
         ["https://tdbm.mn/mn/about-tdbm/compliance/hariltsagchid-hurgeh-medeelel-zovlomj"],
-    ],
+    ], # split,q 
     "human_resource":[
         ["https://tdbm.mn/mn/human-resources/why-tdb",
          "https://tdbm.mn/node/236", "https://tdbm.mn/mn/human-resources/why-tdb/khamtiin-khusel-temuulel"],
@@ -255,7 +255,7 @@ urls: Dict[str, List[List[str]]] = {
         ["https://tdbm.mn/mn/human-resources/shine-talent", 
          "https://tdbm.mn/mn/human-resources/shine-talent/oyutan","https://tdbm.mn/mn/human-resources/shine-talent/career-hotoch"],
 
-    ],
+    ], #d
     "help":[
         ["https://tdbm.mn/mn/help-center"],
         ["https://tdbm.mn/mn/help-center-corporate"],

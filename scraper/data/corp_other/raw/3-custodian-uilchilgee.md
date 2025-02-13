@@ -51,7 +51,7 @@
 
 | Холбоо барих                                                                                             |
 | -------------------------------------------------------------------------------------------------------- |
-| [И-мэйл хаяг: [email protected]](/cdn-cgi/l/email-protection#86f2e2e4e5f3f5f2e9e2efe7e8c6f2e2e4eba8ebe8) |
+| И-мэйл хаяг: tdbcustodian@tdbm.mn |
 | Утас: 11-312386                                                                                          |
 
 https://tdbm.mn/mn/corporate/other/custodian-uilchilgee

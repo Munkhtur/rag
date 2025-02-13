@@ -24,11 +24,11 @@ from langchain_cohere import CohereRerank
 app = FastAPI()
 
 load_dotenv(override=True)
-llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash-exp")
+llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash")
 
 # Pinecone Setup
 pc = Pinecone()
-index_name = "langchain-mongol-context"
+index_name = "tdb"
 
 existing_indexes = [index_info["name"] for index_info in pc.list_indexes()]
 if index_name not in existing_indexes:
@@ -45,10 +45,10 @@ index = pc.Index(index_name)
 
 # Elasticsearch Setup (Keyword Search Only)
 es = Elasticsearch("http://localhost:9200")
-index_name_es = "documents"
+index_name_es = "tdb"
 
 # Initialize embeddings for Pinecone only
-embeddings = HuggingFaceEmbeddings(model_name="gmunkhtur/finetuned_paraphrase-multilingual_test")
+embeddings = HuggingFaceEmbeddings(model_name="gmunkhtur/finetuned_tdb_paraphrase-multilingual_mpnet_try6")
 
 # Pinecone Vector Store
 db_pinecone = PineconeVectorStore(index=index, embedding=embeddings)
@@ -128,10 +128,12 @@ history_aware_retriever = create_history_aware_retriever(llm, retriever, context
 
 # QA Prompt
 qa_system_prompt = (
-    "You are an assistant for question-answering tasks. Use "
-    "the following pieces of retrieved context to answer the "
-    "question. If you don't know the answer, just say that you "
-    "don't know. Use three sentences maximum and keep the answer concise."
+    "You are a virtual assistant for  Худалдаа Хөгжлийн Банк, designed to help customers "
+    "with banking-related inquiries only. Use the retrieved information below to provide "
+    "accurate and concise answers with suggestions in Mongolian. If the answer is not found in the provided context, "
+    "or if the question is unrelated to the bank "
+    "politely inform the user that you don’t have the information and suggest alternative actions or"
+    "inform the user that you can only answer banking-related questions."
     "\n\n"
     "{context}"
 )
@@ -145,7 +147,7 @@ qa_prompt = ChatPromptTemplate.from_messages(
 )
 
 # Final Chain
-question_answer_chain = create_stuff_documents_chain(ChatGoogleGenerativeAI(model="gemini-2.0-flash-exp"), qa_prompt)
+question_answer_chain = create_stuff_documents_chain(ChatGoogleGenerativeAI(model="gemini-2.0-flash"), qa_prompt)
 rag_chain = create_retrieval_chain(history_aware_retriever, question_answer_chain)
 chat_histories = {}
 # query =  "Х. Чойбалсан хэдэн насандаа Санбэйсийн хүрээнд шавилан сууж сахил хүртсэн бэ?"

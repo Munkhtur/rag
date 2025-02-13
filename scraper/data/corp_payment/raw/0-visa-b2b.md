@@ -69,4 +69,3 @@ IBAN код нь улсын код, хүлээн авагчийн банк бо�
 
 
 https://tdbm.mn/mn/corporate/gadaad-tolbor-toocoo/visa-b2b
-

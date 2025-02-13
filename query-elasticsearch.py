@@ -1,15 +1,15 @@
 
 from elasticsearch import Elasticsearch
-index_name = "documents"
+# index_name = "documents"
 
 es = Elasticsearch('http://localhost:9200')
-ndex_name = "documents"
+index_name = "tdb"
 
 query = {
     "size": 5,
     "query": {
         "match": {
-            "content": "Х. Чойбалсан хэдэн насандаа Санбэйсийн хүрээнд шавилан сууж сахил хүртсэн бэ?"
+            "content": "ХХБ ямар олон улсын банктай хамтран ажилладаг вэ?"
         }
     }
 }

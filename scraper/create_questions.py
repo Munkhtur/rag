@@ -141,7 +141,7 @@ def save_to_file(file_path, questions, relevant_docs, corpus):
 
 
 # Call the function
-file_path = "./data/training_data.jsonl"
+file_path = "./data/eval_data.jsonl"
 
 
 parser = argparse.ArgumentParser(description='Process URLs for a given topic.')

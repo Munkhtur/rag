@@ -39,14 +39,15 @@ from langchain_core.messages import HumanMessage, SystemMessage
 load_dotenv(override=True)
 pc = Pinecone()
 
-index_name = "langchain-mongol-context"  # change if desired
+# index_name = "langchain-mongol-context"  # change if desired
+index_name = "tdb"  # change if desired
 
 existing_indexes = [index_info["name"] for index_info in pc.list_indexes()]
 
 if index_name not in existing_indexes:
     pc.create_index(
         name=index_name,
-        dimension=384,
+        dimension=768,
         metric="cosine",
         spec=ServerlessSpec(cloud="aws", region="us-east-1"),
     )
@@ -59,10 +60,10 @@ index = pc.Index(index_name)
 current_dir = os.path.dirname(os.path.abspath(__file__))
 persistent_directory = os.path.join(current_dir, "db", "chroma_db_mongoltxt_110")
 
-embeddings = HuggingFaceEmbeddings(model_name="gmunkhtur/finetuned_paraphrase-multilingual_test")
+embeddings = HuggingFaceEmbeddings(model_name="gmunkhtur/finetuned_tdb_paraphrase-multilingual_mpnet_try6")
 # db = Chroma(persist_directory=persistent_directory, embedding_function=embeddings)
 db = PineconeVectorStore(index=index, embedding=embeddings)
-llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash-exp")
+llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash")
 retriever = db.as_retriever(search_type="similarity", search_kwargs={"k": 10})
 
 

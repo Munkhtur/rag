@@ -6,10 +6,10 @@ es = Elasticsearch('http://localhost:9200')
 index_name = "tdb"
 
 query = {
-    "size": 5,
+    "size": 10,
     "query": {
         "match": {
-            "content": "ХХБ ямар олон улсын банктай хамтран ажилладаг вэ?"
+            "content": "Та ямар зээлийн үйлчилгээтэй вэ?"
         }
     }
 }

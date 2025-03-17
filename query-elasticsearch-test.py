@@ -28,7 +28,7 @@ llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash")
 
 # Pinecone Setup
 pc = Pinecone()
-index_name = "tdb"
+index_name = "tdb-v2"
 
 existing_indexes = [index_info["name"] for index_info in pc.list_indexes()]
 if index_name not in existing_indexes:
@@ -77,7 +77,7 @@ class ElasticsearchKeywordRetriever(BaseRetriever):
         }
         response = self.es_client.search(index=self.index_name, body=es_query)
         res = [
-                Document(page_content=hit["_source"]["content"], metadata=hit["_source"]) 
+                Document(page_content=hit["_source"]["content"] + "\nelastic search\n",metadata=hit["_source"]) 
                 for hit in response["hits"]["hits"]
             ]
             
@@ -99,10 +99,23 @@ class CombinedRetriever(BaseRetriever):
     def _get_relevant_documents(self, query,*, run_manager: CallbackManagerForRetrieverRun):
         pinecone_results = self.pinecone_retriever.invoke(query)
         es_results = self.es_retriever.invoke(query)
-        cohere_reranker = CohereRerank(model="rerank-multilingual-v2.0", top_n=5)
+
+        # Initialize both models
+        cohere_default = CohereRerank(model="rerank-multilingual-v3.0", top_n=5)
+        # Retrieve results
         combined_results = pinecone_results + es_results
-        reranked_results = cohere_reranker.compress_documents(combined_results, query)
-        return reranked_results  # Combine results
+
+        # Rerank with both models
+        reranked_default = cohere_default.compress_documents(combined_results, query)
+        print("RERANKEd")
+        for r in reranked_default:
+            print(r)
+            print("+++++++++++++++++++++++++++")
+        print("pinecome")
+        for r in pinecone_results:
+            print(r)
+            print("+++++++++++++++++++++++++++")
+        return reranked_default  # Combine results
     # def model_dump(self, exclude_defaults=True, exclude_none=True):
     #     return super().model_dump(exclude_defaults=exclude_defaults, exclude_none=exclude_none)
 retriever = CombinedRetriever(pinecone_retriever=pinecone_retriever, es_retriever=es_retriever)

@@ -41,8 +41,7 @@ client = chromadb.PersistentClient(path=path)
 
 
 # Load the base model
-base_model = SentenceTransformer('paraphrase-multilingual-mpnet-base-v2')
-
+base_model = SentenceTransformer('paraphrase-multilingual-mpnet-base-v2') 
 # def retrieve_documents_embeddings(query_embedding, k=10):
 #     query_embedding_list = query_embedding.tolist()
 
